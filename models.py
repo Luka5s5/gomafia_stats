@@ -1,14 +1,14 @@
-from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
 
-class PlayerStats(Base):
-    __tablename__ = "player_stats"
+class Users(Base):
+    __tablename__ = "users"
 
-    user_id = Column(Integer, primary_key=True)
-    user_name = Column(String(50), nullable=False)
+    id = Column(Integer, primary_key=True)
+    username = Column(String(50), nullable=False)
     elo = Column(Float, default=1000.0)
     referee_license = Column(Boolean, default=False)
 
@@ -31,9 +31,7 @@ class PlayerStats(Base):
     don_add = Column(Float, default=0.0)
 
     def __repr__(self):
-        return (
-            f"<Player(user_id={self.user_id}, name='{self.user_name}', elo={self.elo})>"
-        )
+        return f"<Player(user_id={self.id}, name='{self.user_name}', elo={self.elo})>"
 
 
 class Tournaments(Base):
@@ -50,5 +48,27 @@ class Tournaments(Base):
     country = Column(String(255))
     num_of_participants = Column(Integer)
     vk_link = Column(String(255))
-    head_judge_id = Column(Integer)
-    org_id = Column(Integer)
+    head_judge_id = Column(Integer, ForeignKey("users.id"))
+    org_id = Column(Integer, ForeignKey("users.id"))
+
+
+class Games(Base):
+    __tablename__ = "games"
+
+    id = Column(Integer, primary_key=True)
+    tournament_id = Column(Integer, ForeignKey("tournaments.id"), nullable=False)
+    round_num = Column(Integer, nullable=False)
+    table_num = Column(Integer, nullable=False)
+    judge_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    result = Column(String(10), nullable=False)
+
+
+class PlayerPerformances(Base):
+    __tablename__ = "player_performances"
+
+    game_id = Column(Integer, ForeignKey("games.id"), primary_key=True)
+    seat = Column(Integer, primary_key=True)
+    player_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    points = Column(Float, nullable=False)
+    role = Column(String(10), nullable=False)
+    elo_delta = Column(Float, default=0.0)

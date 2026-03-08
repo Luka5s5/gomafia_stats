@@ -62,7 +62,6 @@ class HttpClient:
         """Lazily create and return a ClientSession."""
         if self.session is None:
             self.session = aiohttp.ClientSession(
-                timeout=self.timeout,
                 connector=self.connector,
             )
         return self.session

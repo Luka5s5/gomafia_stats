@@ -24,8 +24,8 @@ async def scrape_user(client: HttpClient, user_id: int) -> dict:
     data_stats = rd["data"]["stats"]
 
     user_resp = {
-        "user_id": int(user_id),
-        "user_name": data_user["login"],
+        "id": int(user_id),
+        "username": data_user["login"],
         "elo": float(data_user["elo"]),
         "referee_license": bool(int(data_user["referee_license"])),
         "town_games": int(data_stats["primary"]["red"]),
